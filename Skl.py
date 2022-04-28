@@ -30,12 +30,12 @@ class Skl(object):
             'http://127.0.0.1:2022/?lt={0}&upwd={1}'.format(lt, upwd)).text
         return response
 
-    def checkin(self, rsa, lt, execu, cookie_1, user_1, code):
+    def checkin(self, rsa, lt, execu, cookie_1, user, code,passwd):
         url_1 = 'https://cas.hdu.edu.cn/cas/login?state=IFgP7G0QAG0UFHop0M4&service=https%3A%2F%2Fskl.hdu.edu.cn%2Fapi%2Fcas%2Flogin%3Fstate%3DIFgP7G0QAG0UFHop0M4%26index%3D'
         data_1 = {
             'rsa': rsa,
-            'ul': 8,
-            'pl': 8,
+            'ul': len(user),
+            'pl': len(passwd),
             'lt': lt,
             'execution': execu,
             '_eventId': 'submit'}
@@ -44,7 +44,7 @@ class Skl(object):
             'Host': 'cas.hdu.edu.cn',
             'Origin': 'https://cas.hdu.edu.cn',
             'Upgrade-Insecure-Requests': '1',
-            'Cookie': 'hdu_cas_un={0}; JSESSIONID={1}; Language=zh_CN'.format(user_1, cookie_1),
+            'Cookie': 'hdu_cas_un={0}; JSESSIONID={1}; Language=zh_CN'.format(user, cookie_1),
             'Accept-Encoding': 'gzip, deflate',
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36',
             'Referer': 'https://cas.hdu.edu.cn/cas/login?state=IFgP7G0QAG0UFHop0M4&service=https%3A%2F%2Fskl.hdu.edu.cn%2Fapi%2Fcas%2Flogin%3Fstate%3DIFgP7G0QAG0UFHop0M4%26index%3D'}
@@ -86,7 +86,7 @@ class Skl(object):
 
         t = int(time.time()*1000)
         url_5 = 'https://skl.hdu.edu.cn/api/checkIn/code-check-in?userid={0}&code={1}&latitude=30.31958&longitude=120.3391&t={2}'.format(
-            user_1, code, t)
+            user, code, t)
         id = str(uuid.uuid1())
         head_5 = {
             'Host': 'skl.hdu.edu.cn',
@@ -110,6 +110,6 @@ class Skl(object):
         cookie = secret[2]
         rsa = self.to_node(lt, user+passwd)
         result = 'hdu账号为'+user+'的返回消息:' + \
-            self.checkin(rsa, lt, execu, cookie, user, message)
+            self.checkin(rsa, lt, execu, cookie, user, message,passwd)
         requests.get(
             url='http://127.0.0.1:5700/send_group_msg?group_id={0}&message={1}'.format(group, result))
